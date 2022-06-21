@@ -1,0 +1,84 @@
+public with sharing class Propertydetail1 {
+public Propertydetail1() {
+}
+@AuraEnabled(cacheable=true)
+public static list<Hotel_Property__c> getLatestProperty(){
+list<Hotel_Property__c> allPropertyList = new list<Hotel_Property__c>();
+allPropertyList = [SELECT id,Additional_rooms__c,Available_from__c,Bachellor__c,Covered_area__c,Family__c,Floor__c,Hotel_Photo__c,Hotel_Rating__c,Location__c,Number_of_Bathroom__c,Number_of_bed_rooms__c,Rent__c,Verified_Hotel__c,Name,Status__c,Hotel_Owner_Lookup__c FROM Hotel_Property__c LIMIT 50];
+
+return allPropertyList;
+}
+@AuraEnabled(cacheable=true)
+public static list<Hotel_Property__c> getSearchedProperty(string location,string bedroom,string Rating,string maxbudget){
+list<Hotel_Property__c> allPropertyList = new list<Hotel_Property__c>();
+string propertyQuery = 'SELECT Id,Additional_Room__c,Available_From__c,Covered_area__c,';
+propertyQuery = propertyQuery+'Floor__c,Bachellor__c,Family__c,';
+propertyQuery = propertyQuery +'Location__c,Additional_rooms__c,Available_from__c,Number_of_Bathroom__c,Number_of_bed_rooms__c,Hotel_Rating__c,Name,';
+propertyQuery = propertyQuery +'Hotel_Photo__c,Property_Video_View__c,Name,Rent__c,Status__c,Verified_Hotel__c,Hotel_Owner_Lookup__c,';
+propertyQuery = propertyQuery +' FROM Hotel_Property__c ';
+string whereClause = 'WHERE Rent__c!=NULL';
+system.debug('****location'+location);
+if(string.isNotBlank(location)){
+if(location !='ALL'){
+whereClause = whereClause+' AND Area__c = :location';
+}
+}
+system.debug('****bedroom'+bedroom);
+integer bedroomcount;
+if(string.isNotBlank(bedroom)){
+if(bedroom !='ALL'){
+bedroomcount= integer.valueOf(bedroom);
+system.debug('****bedroomcount'+bedroomcount);
+whereClause = whereClause+' AND Number_of_bed_rooms__c=:bedroomcount';
+}
+}
+system.debug('****bathroom'+Rating);
+integer Ratingcount;
+if(string.isNotBlank(Rating)){
+if(Rating !='ALL'){
+
+
+
+Ratingcount= integer.valueOf(Rating);
+
+
+
+whereClause = whereClause+' AND Hotel_Rating__c=:bathroomcount';
+
+
+
+}
+}
+system.debug('****maxbudget'+maxbudget);
+double maxBudgetValue;
+if(string.isNotBlank(maxbudget)){
+
+
+
+
+
+maxBudgetValue = double.valueOf(maxbudget) ;
+
+
+
+whereClause = whereClause+' AND Rent__c<=:maxBudgetValue';
+
+
+
+
+
+}
+propertyQuery = propertyQuery +' '+whereClause;
+system.debug('propertyQuery'+propertyQuery);
+allPropertyList = Database.query(propertyQuery);
+system.debug('allPropertyList'+allPropertyList);
+return allPropertyList;
+}
+@AuraEnabled(cacheable=true)
+public static Hotel_Property__c getDetails(string propId){
+system.debug('getDetails propId'+propId);
+Hotel_Property__c prop = [SELECT id,Additional_rooms__c,Available_from__c,Bachellor__c,Covered_area__c,Family__c,Floor__c,Hotel_Photo__c,Hotel_Rating__c,Location__c,Number_of_Bathroom__c,Number_of_bed_rooms__c,Rent__c,Verified_Hotel__c,Name,Status__c,Hotel_Owner_Lookup__c FROM Hotel_Property__c LIMIT 1];
+system.debug('getDetails prop'+prop);
+return prop;
+}
+}
