@@ -179,7 +179,4 @@
         </div>
 
     </aura:if>
-   
-
 </aura:component>
-
