@@ -1,0 +1,240 @@
+<aura:component controller="Propertydetail1" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" >
+
+    <aura:attribute name="propertyList" type="Hotel_Property__c[]"></aura:attribute>
+
+    <aura:attribute name="propertiesFound" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="openOwnerDetails" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="propOwnerId" type="string"></aura:attribute>
+     <aura:attribute name="openNegotiationDetails" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="propertyId1" type="string"></aura:attribute>
+     <aura:attribute name="AmountDetailsCheck" type="boolean" default="false"></aura:attribute>
+    <aura:attribute name="AmountDisp" type="string"></aura:attribute>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.fetchAllProperty}"/>
+    <aura:handler name="PropertyFilterEvent" event="c:PropertyFilterEvent" action="{!c.PropertyFilterEvent}"></aura:handler>
+<c:PropertyFilter></c:PropertyFilter>
+    <aura:if isTrue="{!v.propertiesFound}">
+
+        <lightning:layout multipleRows="true">
+
+            <aura:iteration items="{!v.propertyList}" var="prop">
+
+                <lightning:layoutItem padding="around-small" size="6">
+
+                    <lightning:layout multipleRows="true">
+
+                        <div class="slds-box" style="width:100%; background-color:#00539CFF;">
+
+<lightning:layout>
+
+                            <lightning:layoutItem size="4" padding="around-small">
+
+                                <lightning:formattedRichText value="{!prop.Hotel_Photo__c}"></lightning:formattedRichText>
+
+                                </lightning:layoutItem>                               
+                             <div class="slds-box" style="width:100%; background-color:#9CC3D5FF;">
+			                 <lightning:layoutItem size="8" padding="around-small">
+                                 <lightning:card title="{!prop.Name}">
+                                     <lightning:layoutItem size="12">
+                                     <b style="color:green">&nbsp;Amount:{!prop.Rent__c}</b>
+                                     </lightning:layoutItem>
+                                     <lightning:layoutItem size="12">
+                                     <p style="color:green">&nbsp;Location:{!prop.Location__c}</p>
+                                     </lightning:layoutItem>
+                                     <lightning:layoutItem size="12">
+                                     <p style="color:green">&nbsp;Status:{!prop.Status__c}</p>
+                                     </lightning:layoutItem>
+                                     <lightning:layoutItem size="12">
+                                     <p style="color:green">&nbsp;Bedroom:{!prop.Number_of_Bathroom__c}&nbsp;Bathroom:{!prop.Number_of_bed_rooms__c}</p>
+                                     </lightning:layoutItem>
+                                     <lightning:layoutItem size="12">
+    								<aura:if isTrue="{!prop.Verified_Hotel__c}">
+   										 <b style="color:black">&nbsp;Verified</b>
+    								<aura:set attribute="else">
+     									 <b style="color:red">&nbsp;Not Verified</b>
+    								</aura:set>
+  									</aura:if> 
+									</lightning:layoutItem>
+                                 </lightning:card>
+    						 </lightning:layoutItem>
+                                 <div class="slds-p-top_small">
+                                  <lightning:buttonGroup>
+                                      <lightning:button class="btnstyle" variant="success" label="Owner Details" 
+                                                        value="{!prop.Hotel_Owner_Lookup__c}" onclick="{!c.ownerDetailsClick}"></lightning:button>
+                                  </lightning:buttonGroup>
+                                     <lightning:buttonGroup>
+                                      <lightning:button class="btnstyle" variant="success" label="Amount negotiate" 
+                                                        value="{!prop.Rent__c}" onclick="{!c.openNegotiationDetails}"></lightning:button>
+                                  </lightning:buttonGroup>
+                                                                          <lightning:buttonGroup>
+                                      <lightning:button class="btnstyle" variant="success" label="Contact" 
+                                                        value="{!prop.Id}" onclick="{!c.InquiryDetails}"></lightning:button>
+                                  </lightning:buttonGroup>
+                                     
+    						  </div>
+                                 </div>
+                              
+                            </lightning:layout>                           
+                              
+                        </div>
+
+                    </lightning:layout>
+
+                </lightning:layoutItem>
+
+            </aura:iteration>
+
+        </lightning:layout>
+
+        <aura:set attribute="else">
+
+            <span>Properties are not listed yet as per your selection. Please stay tune to future listing.</span>
+
+        </aura:set>
+
+    </aura:if>
+    <aura:if isTrue="{!v.openOwnerDetails}">
+
+        <div style="margin-top:5%">
+
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+
+                <div class="slds-modal__container">
+
+                    <header class="slds-modal__header">
+
+                        <lightning:card title="Hotel Owner" iconName="standard:people">
+<lightning:buttonIcon  class="slds-modal__close" iconName="utility:close"
+
+                          onclick="{!c.closeOwnerModal}"></lightning:buttonIcon>
+                              </lightning:card>
+
+                    </header>
+
+                    <div class="slds-modal__content slds-p-around_medium" >
+                        <c:PropertyOwner propertyOwnerId="{!v.propOwnerId}"></c:PropertyOwner>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </aura:if>
+
+  <aura:if isTrue="{!v.openNegotiationDetails}">
+
+        <div style="margin-top:5%">
+
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+
+              <div class="slds-modal__container">
+
+                <header class="slds-modal__header">
+
+                    <lightning:buttonIcon  class="slds-modal__close" iconName="utility:close"
+
+                                                  onclick="{!c.closeNegotiation}"></lightning:buttonIcon>
+
+                    </header>
+
+                    <div class="slds-modal__content slds-p-around_medium" >
+
+                    <c:PropertyAmountNegotiation propertyId="{!v.propertyId1}"></c:PropertyAmountNegotiation>
+
+                    </div>
+
+                </div>
+
+            </section>   
+
+        </div>
+
+    </aura:if>
+       <aura:if isTrue="{!v.AmountDetailsCheck}">
+
+        <div style="margin-top:5%">
+
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+
+              <div class="slds-modal__container">
+
+                <header class="slds-modal__header">
+
+                    <lightning:buttonIcon  class="slds-modal__close" iconName="utility:close" onclick="{!c.closeAmountDetailsCheck}"></lightning:buttonIcon>
+
+                    </header>
+
+                    <div class="slds-modal__content slds-p-around_medium" >
+
+                    <c:AmountDisplay amountId="{!v.AmountDisp}"></c:AmountDisplay>
+
+                    </div>
+
+                </div>
+
+            </section>   
+
+        </div>
+
+    </aura:if>
+   
+
+</aura:component>
+
+
+
+PropertyresultController.js
+
+
+
+({
+
+fetchAllProperty : function(component, event, helper) {
+
+helper.fetchAllPropertyHelper(component, event, helper);
+
+},
+     ownerDetailsClick : function(component, event, helper) {
+
+        var eventSource = event.getSource();
+
+        var propOwnerId = eventSource.get('v.value');
+
+        component.set('v.propOwnerId',propOwnerId);
+
+    component.set('v.openOwnerDetails',"true"); 
+    },
+
+    closeOwnerModal : function(component, event, helper) {
+
+    component.set('v.openOwnerDetails',"false");   
+
+    },   
+
+    openNegotiationDetails: function(component, event, helper) {
+
+        var eventSource = event.getSource();
+
+        var propId = eventSource.get('v.value');
+
+         component.set('v.propertyId',propId);
+
+    component.set('v.openNegotiationDetails',"true");     
+
+    },
+    closeNegotiation: function(component, event, helper) {
+
+    component.set('v.openNegotiationDetails',"false");   
+
+    },   
+    AmountDetailsCheck:function(component, event, helper) {
+     component.set('v.AmountDetailsCheck',"true");
+    },
+    closeAmountDetailsCheck:function(component, event, helper) {
+     component.set('v.AmountDetailsCheck',"false");
+    }
+    
+    
+})
