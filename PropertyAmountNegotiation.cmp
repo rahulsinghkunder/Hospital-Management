@@ -1,0 +1,106 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" >
+
+<aura:attribute name="propertyId" type="string"></aura:attribute>
+
+    <aura:attribute name="SuccessMsg" type="boolean" default="false"></aura:attribute>
+
+    <lightning:card title="Submission Status">
+
+    <aura:if isTrue="{!v.SuccessMsg}">
+
+        <span style="color:green;">Submitted Succesfully</span>
+
+            <aura:set attribute="else">
+
+            <div class="slds-p-around_small">
+          
+                <lightning:recordEditForm objectApiName="Hotel_Booking_Enquiry__c" onsuccess="{!c.handleSuccess}">
+                   <lightning:inputField   fieldName="Hotel_Property_Lookup__c" value="{!v.propertyId}" variant="label-stacked" disabled="false" ></lightning:inputField>
+                     <lightning:inputField fieldName="Name"  variant="label-stacked" ></lightning:inputField>
+                     <lightning:inputField fieldName="Phone__c"  variant="label-stacked"></lightning:inputField>
+                     <lightning:inputField fieldName="Email__c"  variant="label-stacked"></lightning:inputField>
+                     <lightning:inputField fieldName="Amount_Negotiation__c"  variant="label-stacked"></lightning:inputField>
+                       <lightning:button type="submit" name="update" label="Submit Enquiery" variant="brand" class="slds-m-top__small"></lightning:button>
+                   </lightning:recordEditForm>
+
+                </div>
+
+            </aura:set>
+
+        </aura:if>
+
+    </lightning:card>
+
+</aura:component>
+
+
+PropertyFilter.cmp
+
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" >
+
+<aura:attribute name="location" type="string"></aura:attribute>   
+
+    <aura:attribute name="locationOptions" type="List"></aura:attribute>
+<aura:attribute name="NoOfBedroom" type="string"></aura:attribute>   
+    <aura:attribute name="NoOfBedroomOptions" type="List"></aura:attribute>
+    <aura:attribute name="Ratingfill" type="string"></aura:attribute>   
+    <aura:attribute name="RatingOptions" type="List"></aura:attribute>
+    <aura:attribute name="maxBudget" type="string"></aura:attribute>
+    
+    <aura:handler name="init" value="this" action="{!c.initFilter}"></aura:handler>
+
+   <aura:registerEvent name="PropertyFilterEvent" type="c:PropertyFilterEvent"></aura:registerEvent>
+
+    <lightning:layout multiplerows="true" class="filterlayout">
+
+        <lightning:layoutitem padding="around-small">
+
+            <div class="header-column">             
+
+                <lightning:combobox label="Locality"  fieldLevelHelp="Search property based on locality"
+
+                    variant="label-stacked" value="{!v.location}" options="{!v.locationOptions}"  >
+
+                </lightning:combobox>               
+
+            </div>
+
+        </lightning:layoutitem>
+
+       <lightning:layoutitem padding="around-small">
+
+            <div class="header-column">             
+
+                <lightning:combobox label="No of Bedroom"  fieldLevelHelp="Search property based on Number of Bedroom"
+
+                    variant="label-stacked" value="{!v.Ratingfill}" options="{!v.NoOfBedroomOptions}"  onchange="{!c.handlefilterChange}">
+
+                </lightning:combobox>               
+
+            </div>
+
+        </lightning:layoutitem>
+        <lightning:layoutitem padding="around-small">
+
+            <div class="header-column">             
+
+                <lightning:combobox label="Hotel Rating"  fieldLevelHelp="Search property based on Rating"
+
+                    variant="label-stacked" value="{!v.NoOfBedroom}" options="{!v.RatingOptions}"  >
+
+                </lightning:combobox>               
+
+            </div>
+
+        </lightning:layoutitem>
+        <lightning:layoutitem padding="around-small">
+
+            <div class="header-column">                           
+            <lightning:input type="number" value="{!v.maxBudget}"  fieldLevelHelp="Search property based on your budget" name="maxbudget" label="Maximum Budget" placeholder="Enter maximum Budget"></lightning:input>
+            </div>
+
+        </lightning:layoutitem>
+
+    </lightning:layout>
+
+</aura:component>
